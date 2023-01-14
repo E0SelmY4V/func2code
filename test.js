@@ -14,10 +14,10 @@ function log(fn) {
 }
 // log(function () { return 1 + 2; });
 // log(() => { return 1 + 2; });
-log(
-	() =>  1 + 2
-);
-console.log(new Function('()=>1+1').toString())
+// log(
+// 	({[`as${{a: `123`}}d`]: a}) =>  1 + 2
+// );
+// console.log(new Function('()=>1+1').toString())
 // log(function ({ ['fun{}{}{ction']: a, s: [s] }) { return 1 + 2; });
 // log(({ function: a }) => { return 1 + 2; });
 // log(({ ['(a\'((""\"()']: a }) => 1 + 2);
