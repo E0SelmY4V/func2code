@@ -1,28 +1,19 @@
 const func2code = require('.');
 
-const o = {
-	a() { return 1 + 2; },
-	b({ a }) { return 1 + 2; },
-	['c\'']() { return 1 + 2; },
-	['d']({ a }) { return 1 + 2; },
-	function(){
-		return 1 + 1;
-	}
-}
 function log(fn) {
-	console.log(func2code.codeSplit(fn));
+	console.log(func2code.codeInner(fn));
 }
-// log(function () { return 1 + 2; });
-// log(() => { return 1 + 2; });
-// log(
-// 	({[`as${{a: `123`}}d`]: a}) =>  1 + 2
-// );
-// console.log(new Function('()=>1+1').toString())
-// log(function ({ ['fun{}{}{ction']: a, s: [s] }) { return 1 + 2; });
-// log(({ function: a }) => { return 1 + 2; });
-// log(({ ['(a\'((""\"()']: a }) => 1 + 2);
-// log(function () { return 1 + 2; });
-// log(function () { return 1 + 2; });
-// log(function () { return 1 + 2; });
-// log(function () { return 1 + 2; });
-// log(function () { return 1 + 2; });
+log(function () { return 1 + 6; });
+log(() => { return 1 + 7; });
+log(function ({ ['fun{{{ction']: a, s: [s] }) { return 1 + 8; });
+log(({ function: a }) => { return 1 + 9; });
+log(({ ['(a\'((""\"()' + `as ${`${'a' * 23 + 'da'}`}`]: a }) => 1 + 10);
+const o = {
+	a() { return 1 + 12; },
+	b({ a }) { return 1 + 13; },
+	['c\''](a, b, asd) { return 1 + 14; },
+	[`${{ [`${['to', 'Str'].join('') + `${"ing"}`}`]() { return 123 } }}` + '']() { return 1 + 15; },
+	['d']({ a }) { return 1 + 15; },
+	function() { return 1 + 16; }
+}
+for (var i in o) log(o[i]);
