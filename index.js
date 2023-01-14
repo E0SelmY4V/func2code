@@ -1,20 +1,28 @@
 !function () {
-	var vo = { ' ': 0, '\t': 0, '\n': 0, '\r': 0 };
+	var vo = { ' ': 0, '\t': 0, '\n': 0, '\r': 0 },
+		noIdx = !'.'[0];
+	/**@type {(n:string|string[])=>string} */
+	var toStr = noIdx ? function (n) { return n.join('') } : function (n) { return n; }
+	/**@type {(n:string,o:string[])=>string} */
 	function reps(n, o) {
 		for (var i = o.length - 1; i >= 0; i -= 2) n = n.split(o[i - 1]).join(o[i]);
 		return n;
 	}
+	/**@type {(n:string)=>string} */
 	function outSpace(n) {
 		n = ' ' + reps(n, ['\n', ' ', '\r', ' ', '\t', ' ']) + ' ';
 		while (n.indexOf('  ') !== -1) n = n.split('  ').join(' ');
 		return n.slice(1, -1);
 	}
+	/**@type {(n:string[])=>string[]} */
 	function rmvVoid(n) {
 		for (var r = [], i = 0; i < n.length; ++i) n[i] && r.push(n[i]);
 		return r;
 	}
-	function repWsEle(n) { n && (this.quo = n); }
-	repWsEle.prototype = { depth: 0, had$: false };
+	/**@param {string} n */
+	function repWsEle(n) { this.quo = n; }
+	repWsEle.prototype = { quo: '', depth: 0, had$: false };
+	/**@param {string|string[]} str */
 	function repWs(str) {
 		var stack = [new repWsEle()], now = 0, eleNow = stack[now], isInquo = false;
 		var rslt = [], flag = 0, i;
@@ -23,45 +31,47 @@
 				case '$': eleNow.had$ = true; continue;
 				case eleNow.quo:
 					stack.pop(), eleNow = stack[--now], isInquo = false;
-					rslt.push(str.slice(flag, flag = i + 1));
+					rslt.push(toStr(str.slice(flag, flag = i + 1)));
 					continue;
 				case '\\': ++i; delete eleNow.had$; continue;
 				case '{': eleNow.quo === '`' && eleNow.had$ && (
 					stack.push(new repWsEle()), eleNow = stack[++now], isInquo = false,
-					rslt.push(str.slice(flag, flag = i + 1))
+					rslt.push(toStr(str.slice(flag, flag = i + 1)))
 				); delete eleNow.had$; continue;
 				default: delete eleNow.had$; continue;
 			}
 			else switch (str[i]) {
 				case "'": case "`": case '"':
 					stack.push(new repWsEle(str[i])), eleNow = stack[++now], isInquo = true;
-					rslt.push(outSpace(str.slice(flag, flag = i)));
+					rslt.push(outSpace(toStr(str.slice(flag, flag = i))));
 					continue;
 				case '{': case '[': case '(': ++eleNow.depth; continue;
 				case '}': case ']': case ')': case ',':
 					if (eleNow.depth === 0 && now === 0) return {
-						code: (rslt.push(outSpace(str.slice(flag, i))), rmvVoid(rslt).join(' ')),
+						code: (rslt.push(outSpace(toStr(str.slice(flag, i)))), rmvVoid(rslt).join(' ')),
 						index: i,
 						nofin: str[i] === ','
 					};
 					if (str[i] !== ',') eleNow.depth-- || (
 						stack.pop(), eleNow = stack[--now], isInquo = true,
-						rslt.push(outSpace(str.slice(flag, flag = i)))
+						rslt.push(outSpace(toStr(str.slice(flag, flag = i))))
 					);
 					continue;
 				default: continue;
 			}
-		rslt.push(outSpace(str.slice(flag)));
+		rslt.push(outSpace(toStr(str.slice(flag))));
 		return {
 			code: rmvVoid(rslt).join(' '),
 			index: i,
 			nofin: false
 		}
 	}
+	/**@type {(str:string|string[],find:string)=>number} */
 	function lastIndexOf(str, find) {
 		for (var i = str.length - 1; i >= 0; --i) if (find === str[i]) return i;
 		return -1;
 	}
+	/**@param {string|string[]} str */
 	function splitParams(str) {
 		var k, rslt = [], index = 0;
 		while (
@@ -76,8 +86,9 @@
 			index: index
 		};
 	}
+	/**@type {(fn:Function)=>string[]} */
 	function split(fn) {
-		var str = fn.toString(), stack = [0], now = 0, eleNow = stack[now], rslt, name = '', flag = 0, t;
+		var str = noIdx ? fn.toString().split('') : fn.toString(), stack = [0], now = 0, eleNow = stack[now], rslt, name = '', flag = 0, t;
 		function add(n) { stack.push(n), eleNow = stack[++now]; }
 		function del() { stack.pop(), eleNow = stack[--now]; }
 		for (var i = 0; i < str.length; ++i) switch (eleNow) {
@@ -95,24 +106,24 @@
 			case 2: switch (str[i]) { case '>': del(), add(3); } continue;
 			case 3: switch (str[i]) {
 				case ' ': case '\t': case '\n': case '\r': continue;
-				case '{': return rslt.push('return (()=>' + str.slice(i) + ')();', name, fn.name), rslt;
-				default: return rslt.push('return ' + str.slice(i) + ';', name, fn.name), rslt;
+				case '{': return rslt.push('return (()=>' + toStr(str.slice(i)) + ')();', name, fn.name), rslt;
+				default: return rslt.push('return ' + toStr(str.slice(i)) + ';', name, fn.name), rslt;
 			} continue;
 			case 4: switch (str[i]) {
 				case '(': str[i - 1] in vo ? (
 					flag = i + 1,
 					del(), add(5), add(1)
 				) : (
-					str = str.slice(0, i) + ' ' + str.slice(i),
+					noIdx ? str.splice(i, 0, ' ') : str = str.slice(0, i) + ' ' + str.slice(i),
 					--i
 				); continue;
 				case ' ': case '\t': case '\n': case '\r':
-					name || str.slice(flag, i) === 'function' || (name = '"' + str.slice(flag, i) + '"');
+					name || toStr(str.slice(flag, i)) === 'function' || (name = '"' + toStr(str.slice(flag, i)) + '"');
 					flag = i + 1;
 					continue;
 			} continue;
 			case 5: switch (str[i]) {
-				case '{': return rslt.push(str.slice(i + 1, lastIndexOf(str, '}')), name, fn.name), rslt;
+				case '{': return rslt.push(toStr(str.slice(i + 1, lastIndexOf(str, '}'))), name, fn.name), rslt;
 			} continue;
 			case 6:
 				t = repWs(str.slice(flag));
@@ -126,27 +137,28 @@
 		}
 	}
 	var exp = {
-		code: function (fn) {
+		getCode: function (fn) {
 			return fn.toString();
 		},
 		split: function (fn) {
 			var r = split(fn);
-			return r ? {
+			return {
 				name: r.pop(),
 				nameCode: r.pop(),
-				code: r.pop(),
+				code: fn.toString(),
+				innerCode: r.pop(),
 				params: r
-			} : {};
+			};
 		},
-		codeInner: function (fn) {
+		getInnerCode: function (fn) {
 			var r = split(fn);
 			return r[r.length - 3];
 		},
-		params: function (fn) {
+		getParams: function (fn) {
 			var r = split(fn);
 			return r.pop(), r.pop(), r.pop(), r;
 		},
-		nameCode: function (fn) {
+		getNameCode: function (fn) {
 			var r = split(fn);
 			return r.pop(), r.pop();
 		}

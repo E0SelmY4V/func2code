@@ -1,9 +1,11 @@
 const func2code = require('.');
 
 function log(fn) {
-	console.log(func2code.codeInner(fn));
+	console.log(func2code.split(fn));
 }
 log(function () { return 1 + 6; });
+
+log(function asd() { return 1 + 6; });
 log(() => { return 1 + 7; });
 log(function ({ ['fun{{{ction']: a, s: [s] }) { return 1 + 8; });
 log(({ function: a }) => { return 1 + 9; });
