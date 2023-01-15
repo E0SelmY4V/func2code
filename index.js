@@ -129,6 +129,11 @@
 					);
 					flag = i + 1;
 					continue;
+				case '>':
+					rslt = [name.slice(1, -1)];
+					name = '';
+					del(), add(3);
+					continue;
 			} continue;
 			case 5: switch (str[i]) {
 				case '{': return rslt.push(toStr(str.slice(i + 1, lastIndexOf(str, '}'))), name, fn.name, isAsync), rslt;
