@@ -1,5 +1,5 @@
 /**
  * Function to Code
- * @version 1.0.2
+ * @version 1.0.3
  */
 declare const func2code: typeof import('.')
