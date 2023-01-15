@@ -1,6 +1,6 @@
 /**
  * Function to Code
- * @version 1.0.0
+ * @version 1.0.2
  */
 declare module "."
 /**Get the code of `fn` */
