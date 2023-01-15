@@ -86,6 +86,9 @@
 			index: index
 		};
 	}
+	function pack(r, i, n, a, s) {
+		return { params: rmvVoid(r), innerCode: i, nameCode: n, name: a.name, code: a.toString(), isAsync: s };
+	}
 	/**@type {(fn:Function)=>string[]} */
 	function split(fn) {
 		var str = noIdx ? fn.toString().split('') : fn.toString(),
@@ -110,8 +113,8 @@
 			case 2: switch (str[i]) { case '>': del(), add(3); } continue;
 			case 3: switch (str[i]) {
 				case ' ': case '\t': case '\n': case '\r': continue;
-				case '{': return rslt.push((isAsync ? 'return await(async()=>' : 'return (()=>') + toStr(str.slice(i)) + ')();', name, fn.name, isAsync), rslt;
-				default: return rslt.push('return ' + toStr(str.slice(i)) + ';', name, fn.name, isAsync), rslt;
+				case '{': return pack(rslt, (isAsync ? 'return await(async()=>' : 'return (()=>') + toStr(str.slice(i)) + ')();', name, fn, isAsync);
+				default: return pack(rslt, 'return ' + toStr(str.slice(i)) + ';', name, fn, isAsync);
 			} continue;
 			case 4: switch (str[i]) {
 				case '(': str[i - 1] in vo ? (
@@ -136,7 +139,7 @@
 					continue;
 			} continue;
 			case 5: switch (str[i]) {
-				case '{': return rslt.push(toStr(str.slice(i + 1, lastIndexOf(str, '}'))), name, fn.name, isAsync), rslt;
+				case '{': return pack(rslt, toStr(str.slice(i + 1, lastIndexOf(str, '}'))), name, fn, isAsync);
 			} continue;
 			case 6:
 				t = repWs(str.slice(flag));
@@ -153,28 +156,15 @@
 		getCode: function (fn) {
 			return fn.toString();
 		},
-		split: function (fn) {
-			var r = split(fn);
-			return {
-				isAsync: r.pop(),
-				name: r.pop(),
-				nameCode: r.pop(),
-				code: fn.toString(),
-				innerCode: r.pop(),
-				params: r
-			};
-		},
+		split: split,
 		getInnerCode: function (fn) {
-			var r = split(fn);
-			return r[r.length - 3];
+			return split(fn).innerCode;
 		},
 		getParams: function (fn) {
-			var r = split(fn);
-			return r.pop(), r.pop(), r.pop(), r;
+			return split(fn).params;
 		},
 		getNameCode: function (fn) {
-			var r = split(fn);
-			return r.pop(), r.pop();
+			return split(fn).nameCode;
 		},
 		isAsync: function (fn) {
 			return split(fn).isAsync;
