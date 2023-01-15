@@ -7,6 +7,7 @@ declare module "."
 export function getCode<F extends Function>(fn: F): ReturnType<F['toString']>;
 /**Parse the function */
 export function split<F extends Function>(fn: F): {
+	isAsync: boolean;
 	name: F['name'];
 	nameCode: string;
 	code: ReturnType<F['toString']>;
@@ -19,3 +20,5 @@ export function getInnerCode(fn: Function): string;
 export function getParams(fn: Function): string[];
 /**Get the possible code delcarating `fn`'s name */
 export function getNameCode(fn: Function): string;
+/**Know if `fn` is an async function */
+export function isAsync(fn: Function): boolean;
