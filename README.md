@@ -31,7 +31,7 @@ const func2code = require('func2code');
 - Input
 
   ```js
-  func2code.split(function (
+  func2code.split(async function abc(
     a, k,
     {[`${[1,2,3].join('')}`]: b},
     [c, d]
@@ -44,17 +44,15 @@ const func2code = require('func2code');
 
   ```js
   {
-    name: '',
-    nameCode: '',
-    code: 'function (\n' +
-      '  a, k,\n' +
-      "  {[`${[1,2,3].join('')}`]: b},\n" +
-      '  [c, d]\n' +
-      ') {\n' +
-      '  return 1 + 2;\n' +
-      '}',
+    isAsync: true,
+    name: 'abc',
+    nameCode: '"abc"',
     innerCode: '\n  return 1 + 2;\n',
-    params: [ 'a', 'k', "{[ `${ [1,2,3].join( '' ) }` ]: b}", '[c, d]' ]
+    params: [
+      'a', 'k',
+      "{[ `${ [1,2,3].join( '' ) }` ]: b}",
+      '[c, d]'
+    ]
   }
   ```
 
