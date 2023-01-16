@@ -24,5 +24,8 @@
 	"bugs": {
 		"url": "https://github.com/E0SelmY4V/func2code/issues"
 	},
+	"devDependencies": {
+		"export-tester": "^1.0.0"
+	},
 	"homepage": "https://github.com/E0SelmY4V/func2code#readme"
 }

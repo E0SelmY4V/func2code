@@ -23,3 +23,16 @@ const o = {
 	function() { return 1 + 16; }
 }
 for (var i in o) log(o[i]);
+
+require('export-tester')(
+	{
+		sign: 'f2c',
+		pack: 'func2code',
+		// req: ['ts'],
+	},
+	{
+		import() {
+			console.log(f2c);
+		}
+	}
+)

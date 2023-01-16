@@ -1,3 +1,10 @@
+/**
+ * Function to Code
+ * @version 1.0.3
+ * @license MIT
+ * @link http://github.com/E0SelmY4V/func2code
+ */
+"use strict";
 !function () {
 	var vo = { ' ': 0, '\t': 0, '\n': 0, '\r': 0 },
 		noIdx = !'.'[0];
@@ -172,5 +179,5 @@
 	};
 	typeof module === 'undefined'
 		? window.func2code = exp
-		: module.exports = exp;
+		: module.exports = exp[['defa', 'ult'].join('')] = exp;
 }();
