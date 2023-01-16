@@ -1,8 +1,8 @@
 /**
  * Function to Code
- * @version 1.0.3
+ * @version 1.0.4
  * @license MIT
- * @link http://github.com/E0SelmY4V/func2code
+ * @link https://github.com/E0SelmY4V/func2code
  */
 "use strict";
 !function () {

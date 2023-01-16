@@ -1,8 +1,8 @@
 /**
  * Function to Code
- * @version 1.0.3
+ * @version 1.0.4
  * @license MIT
- * @link http://github.com/E0SelmY4V/func2code
+ * @link https://github.com/E0SelmY4V/func2code
  */
 declare module "."
 /**Get the code of `fn` */
@@ -26,9 +26,9 @@ export function getNameCode(fn: Function): string;
 export function isAsync(fn: Function): boolean;
 /**
  * Function to Code
- * @version 1.0.3
+ * @version 1.0.4
  * @license MIT
- * @link http://github.com/E0SelmY4V/func2code
+ * @link https://github.com/E0SelmY4V/func2code
  */
 declare const func2code: typeof import('.');
 export default func2code
