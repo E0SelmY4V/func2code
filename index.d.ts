@@ -1,10 +1,3 @@
-/**
- * Function to Code
- * @version 1.0.4
- * @license MIT
- * @link https://github.com/E0SelmY4V/func2code
- */
-declare module "."
 /**Get the code of `fn` */
 export function getCode<F extends Function>(fn: F): ReturnType<F['toString']>;
 /**Parse the function */
