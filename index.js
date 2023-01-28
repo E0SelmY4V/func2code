@@ -43,51 +43,58 @@
 		had$: false
 	};
 
-	function Stack(n) { this.mem = [this.ele = n] }
+	function Stack(n, str) {
+		this.mem = [this.ele = n];
+		this.rslt = [];
+		this.str = str;
+	}
 	Stack.prototype = {
 		mem: null,
 		now: 0,
 		ele: void 0,
+		flag: 0,
+		str: '',
+		rslt: null,
+		write: function (i) { this.rslt.push(outSpace(toStr(this.str.slice(this.flag, this.flag = i)))); },
+		end: function (i) { this.write(i || this.flag); return rmvVoid(this.rslt).join(' '); },
 		add: function (n) { this.mem.push(n); this.ele = this.mem[++this.now]; },
 		del: function () { this.mem.pop(); this.ele = this.mem[--this.now]; }
 	};
 
 	/**@param {string|string[]} str */
 	function repWs(str) {
-		var stack = new Stack(new repWsEle());
-		var rslt = [];
-		var flag = 0;
+		var stack = new Stack(new repWsEle(), str);
 		for (var i = 0; i < str.length; ++i) switch (stack.ele.quo) {
 			case false: switch (str[i]) {
 				case "'": case "`": case '"': delete stack.ele.slash;
 					stack.add(new repWsEle(str[i]));
-					rslt.push(outSpace(toStr(str.slice(flag, flag = i))));
+					stack.write(i);
 					continue;
 				case '{': case '[': case '(': delete stack.ele.slash;
 					++stack.ele.depth;
 					continue;
 				case '}': case ']': case ')': case ',': delete stack.ele.slash;
 					if (stack.ele.depth === 0 && stack.now === 0) return {
-						code: (rslt.push(outSpace(toStr(str.slice(flag, i)))), rmvVoid(rslt).join(' ')),
+						code: stack.end(i),
 						index: i,
 						nofin: str[i] === ','
 					};
 					if (str[i] !== ',') stack.ele.depth-- || (
 						stack.del(),
-						rslt.push(outSpace(toStr(str.slice(flag, flag = i))))
+						stack.write(i)
 					);
 					continue;
 				case '/':
 					stack.ele.slash ? (
 						stack.add(new repWsEle('/')),
-						rslt.push(outSpace(toStr(str.slice(flag, flag = i - 1)))),
+						stack.write(i - 1),
 						delete stack.ele.slash
 					) : stack.ele.slash = true;
 					continue;
 				case '*':
 					stack.ele.slash && (
 						stack.add(new repWsEle('*')),
-						rslt.push(outSpace(toStr(str.slice(flag, flag = i - 1)))),
+						stack.write(i - 1),
 						delete stack.ele.slash
 					);
 					continue;
@@ -95,7 +102,7 @@
 					continue;
 			}
 			case '/': switch (str[i]) {
-				case '\n': case '\r': stack.del(), flag = i + 1;
+				case '\n': case '\r': stack.del(), stack.flag = i + 1;
 				default: continue;
 			}
 			case '*': switch (str[i]) {
@@ -103,7 +110,7 @@
 					stack.ele.star = true;
 					continue;
 				case '/':
-					stack.ele.star && stack.del(), flag = i + 1;
+					stack.ele.star && (stack.del(), stack.flag = i + 1);
 					continue;
 				default: delete stack.ele.star;
 					continue;
@@ -113,7 +120,7 @@
 					stack.ele.had$ = true;
 					continue;
 				case stack.ele.quo: stack.del();
-					rslt.push(toStr(str.slice(flag, flag = i + 1)));
+					stack.write(i + 1);
 					continue;
 				case '\\': delete stack.ele.had$;
 					++i;
@@ -121,7 +128,7 @@
 				case '{':
 					stack.ele.quo === '`' && stack.ele.had$ && (
 						stack.add(new repWsEle()),
-						rslt.push(toStr(str.slice(flag, flag = i + 1)))
+						stack.write(i + 1)
 					);
 					delete stack.ele.had$;
 					continue;
@@ -129,12 +136,11 @@
 					continue;
 			}
 		}
-		rslt.push(outSpace(toStr(str.slice(flag))));
 		return {
-			code: rmvVoid(rslt).join(' '),
+			code: stack.end(),
 			index: i,
 			nofin: false
-		}
+		};
 	}
 
 	/**@type {(str:string|string[],find:string)=>number} */

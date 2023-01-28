@@ -59,8 +59,8 @@ module.exports = [[
 		isAsync: false
 	},
 ], [
-	function ( // asds{}{{{{{$$$``$`
-	/**]]]}}}}} */asd) { return 1 + 8; },
+	function ( // asds/// / /  * */* /*{}{{{{{$$$``$`
+	/**]]]}}** //*}}} */asd) { return 1 + 8; },
 	{
 		params: ["asd"],
 		innerCode: ' return 1 + 8; ',
