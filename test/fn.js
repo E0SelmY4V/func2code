@@ -26,37 +26,19 @@ module.exports = [[
 		isAsync: true
 	},
 ], [
-	() => { return 1 + 7; },
+	() => 1 + 7,
 	{
 		params: [],
-		innerCode: 'return (()=>{ return 1 + 7; })();',
+		innerCode: 'return 1 + 7;',
 		nameCode: '',
 		name: '',
 		isAsync: false
 	},
 ], [
-	async () => { return 1 + 7; },
+	async ({ function: a }) => { return 1 + 7; },
 	{
-		params: [],
-		innerCode: 'return await(async()=>{ return 1 + 7; })();',
-		nameCode: '',
-		name: '',
-		isAsync: true
-	},
-], [
-	a => { return 1 + 7; },
-	{
-		params: ['a'],
-		innerCode: 'return (()=>{ return 1 + 7; })();',
-		nameCode: '',
-		name: '',
-		isAsync: false
-	},
-], [
-	async a => { return 1 + 7; },
-	{
-		params: ['a'],
-		innerCode: 'return await(async()=>{ return 1 + 7; })();',
+		params: ['{ function: a }'],
+		innerCode: ' return 1 + 7; ',
 		nameCode: '',
 		name: '',
 		isAsync: true
@@ -66,15 +48,6 @@ module.exports = [[
 	{
 		params: ["{ [ 'fun{{{ction' ]: a, s: [s] }"],
 		innerCode: ' return 1 + 8; ',
-		nameCode: '',
-		name: '',
-		isAsync: false
-	},
-], [
-	({ function: a }) => { return 1 + 9; },
-	{
-		params: ['{ function: a }'],
-		innerCode: 'return (()=>{ return 1 + 9; })();',
 		nameCode: '',
 		name: '',
 		isAsync: false
@@ -103,17 +76,6 @@ module.exports = [[
 	},
 ], [
 	{
-		b({ a }) { return 1 + 13; }
-	},
-	{
-		params: ['{ a }'],
-		innerCode: ' return 1 + 13; ',
-		nameCode: '"b"',
-		name: 'b',
-		isAsync: false
-	},
-], [
-	{
 		['c\''](a, b, asd) { return 1 + 14; }
 	},
 	{
@@ -125,25 +87,14 @@ module.exports = [[
 	},
 ], [
 	{
-		[`${{ [`${['to', 'Str'].join('') + `${"ing"}`}`]() { return 123 } }}` + '']() { return 1 + 15; }
+		async [`${{ [`${['to', 'Str'].join('') + `${"ing"}`}`]() { return 123 } }}` + '']() { return 1 + 15; }
 	},
 	{
 		params: [],
 		innerCode: ' return 1 + 15; ',
 		nameCode: '`${ { [ `${ [ \'to\' , \'Str\' ].join( \'\' ) + `${ "ing" }` }` ]() { return 123 } } }` + \'\'',
 		name: '123',
-		isAsync: false
-	},
-], [
-	{
-		['d']({ a }) { return 1 + 15; }
-	},
-	{
-		params: ['{ a }'],
-		innerCode: ' return 1 + 15; ',
-		nameCode: "'d'",
-		name: 'd',
-		isAsync: false
+		isAsync: true
 	},
 ], [
 	{
@@ -166,5 +117,16 @@ module.exports = [[
 		nameCode: '',
 		name: 'function',
 		isAsync: false
+	},
+], [
+	{
+		async function() { return 1 + 19; }
+	},
+	{
+		params: [],
+		innerCode: ' return 1 + 19; ',
+		nameCode: '',
+		name: 'function',
+		isAsync: true
 	},
 ]];

@@ -158,7 +158,7 @@
 				case ' ': case '\t': case '\n': case '\r': continue;
 				case '{': return pack(
 					rslt,
-					(isAsync ? 'return await(async()=>' : 'return (()=>') + toStr(str.slice(i)) + ')();',
+					toStr(str.slice(i + 1, lastIndexOf(str, '}'))),
 					name,
 					fn,
 					isAsync
