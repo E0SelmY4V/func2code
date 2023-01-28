@@ -127,7 +127,6 @@
 			innerCode: code,
 			nameCode: name,
 			name: fn.name,
-			code: fn.toString(),
 			isAsync: isAsync
 		};
 	}

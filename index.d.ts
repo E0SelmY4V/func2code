@@ -5,7 +5,6 @@ export function split<F extends Function>(fn: F): {
 	isAsync: boolean;
 	name: F['name'];
 	nameCode: string;
-	code: ReturnType<F['toString']>;
 	innerCode: string;
 	params: string[];
 };
