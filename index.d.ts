@@ -22,7 +22,7 @@ export function isGenerator(fn: Function): boolean;
 export function isAsync(fn: Function): boolean;
 /**
  * Function to Code
- * @version 1.0.4
+ * @version 1.1.0
  * @license MIT
  * @link https://github.com/E0SelmY4V/func2code
  */
