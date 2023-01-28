@@ -44,15 +44,13 @@ const func2code = require('func2code');
 
   ```js
   {
-    isAsync: true,
-    name: 'abc',
-    nameCode: '"abc"',
+    params: [ 'a', 'k', "{[ `${ [1,2,3].join( '' ) }` ]: b}", '[c, d]' ],
     innerCode: '\n  return 1 + 2;\n',
-    params: [
-      'a', 'k',
-      "{[ `${ [1,2,3].join( '' ) }` ]: b}",
-      '[c, d]'
-    ]
+    nameCode: '"abc"',
+    name: 'abc',
+    isArrow: false,
+    isAsync: true,
+    isGenerator: false
   }
   ```
 

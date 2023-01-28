@@ -3,6 +3,8 @@ export function getCode<F extends Function>(fn: F): ReturnType<F['toString']>;
 /**Parse the function */
 export function split<F extends Function>(fn: F): {
 	isAsync: boolean;
+	isArrow: boolean;
+	isGenerator: boolean;
 	name: F['name'];
 	nameCode: string;
 	innerCode: string;
