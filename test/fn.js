@@ -5,7 +5,8 @@ module.exports = [[
 		innerCode: ' return 1 + 6; ',
 		nameCode: '',
 		name: '',
-		isAsync: false
+		isAsync: false,
+		isArrow: false,
 	},
 ], [
 	function asd() { return 1 + 6; },
@@ -14,6 +15,7 @@ module.exports = [[
 		innerCode: ' return 1 + 6; ',
 		nameCode: '"asd"',
 		name: 'asd',
+		isArrow: false,
 		isAsync: false
 	},
 ], [
@@ -23,6 +25,7 @@ module.exports = [[
 		innerCode: ' return 1 + 6; ',
 		nameCode: '"asd"',
 		name: 'asd',
+		isArrow: false,
 		isAsync: true
 	},
 ], [
@@ -32,6 +35,7 @@ module.exports = [[
 		innerCode: 'return 1 + 7;',
 		nameCode: '',
 		name: '',
+		isArrow: true,
 		isAsync: false
 	},
 ], [
@@ -41,6 +45,7 @@ module.exports = [[
 		innerCode: ' return 1 + 7; ',
 		nameCode: '',
 		name: '',
+		isArrow: true,
 		isAsync: true
 	},
 ], [
@@ -50,6 +55,7 @@ module.exports = [[
 		innerCode: ' return 1 + 8; ',
 		nameCode: '',
 		name: '',
+		isArrow: false,
 		isAsync: false
 	},
 ], [
@@ -61,6 +67,7 @@ module.exports = [[
 		innerCode: 'return 1 + 10;',
 		nameCode: '',
 		name: '',
+		isArrow: true,
 		isAsync: false
 	},
 ], [
@@ -72,6 +79,7 @@ module.exports = [[
 		innerCode: ' return 1 + 12; ',
 		nameCode: '"a"',
 		name: 'a',
+		isArrow: false,
 		isAsync: false
 	},
 ], [
@@ -83,6 +91,7 @@ module.exports = [[
 		innerCode: ' return 1 + 14; ',
 		nameCode: "'c\\''",
 		name: "c'",
+		isArrow: false,
 		isAsync: false
 	},
 ], [
@@ -94,6 +103,7 @@ module.exports = [[
 		innerCode: ' return 1 + 15; ',
 		nameCode: '`${ { [ `${ [ \'to\' , \'Str\' ].join( \'\' ) + `${ "ing" }` }` ]() { return 123 } } }` + \'\'',
 		name: '123',
+		isArrow: false,
 		isAsync: true
 	},
 ], [
@@ -105,6 +115,7 @@ module.exports = [[
 		innerCode: ' return 1 + 15; ',
 		nameCode: "'d'",
 		name: 'd',
+		isArrow: false,
 		isAsync: true
 	},
 ], [
@@ -116,6 +127,7 @@ module.exports = [[
 		innerCode: ' return 1 + 16; ',
 		nameCode: '',
 		name: 'function',
+		isArrow: false,
 		isAsync: false
 	},
 ], [
@@ -127,6 +139,7 @@ module.exports = [[
 		innerCode: ' return 1 + 19; ',
 		nameCode: '',
 		name: 'function',
+		isArrow: false,
 		isAsync: true
 	},
 ]];

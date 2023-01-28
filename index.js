@@ -121,12 +121,13 @@
 		};
 	}
 
-	function pack(rslt, code, name, fn, isAsync) {
+	function pack(rslt, code, name, fn, isAsync, isArrow) {
 		return {
 			params: rmvVoid(rslt),
 			innerCode: code,
 			nameCode: name,
 			name: fn.name,
+			isArrow: isArrow,
 			isAsync: isAsync
 		};
 	}
@@ -161,14 +162,16 @@
 					toStr(str.slice(i + 1, lastIndexOf(str, '}'))),
 					name,
 					fn,
-					isAsync
+					isAsync,
+					true
 				);
 				default: return pack(
 					rslt,
 					'return ' + toStr(str.slice(i)) + ';',
 					name,
 					fn,
-					isAsync
+					isAsync,
+					true
 				);
 			} continue;
 			case 4: switch (str[i]) {
@@ -199,7 +202,8 @@
 					toStr(str.slice(i + 1, lastIndexOf(str, '}'))),
 					name,
 					fn,
-					isAsync
+					isAsync,
+					false
 				);
 			} continue;
 			case 6:
@@ -227,6 +231,9 @@
 		},
 		getNameCode: function (fn) {
 			return split(fn).nameCode;
+		},
+		isArrow: function (fn) {
+			return split(fn).isArrow;
 		},
 		isAsync: function (fn) {
 			return split(fn).isAsync;

@@ -14,6 +14,8 @@ export function getInnerCode(fn: Function): string;
 export function getParams(fn: Function): string[];
 /**Get the possible code delcarating `fn`'s name */
 export function getNameCode(fn: Function): string;
+/**Know if `fn` is an arrow function */
+export function isArrow(fn: Function): boolean;
 /**Know if `fn` is an async function */
 export function isAsync(fn: Function): boolean;
 /**
