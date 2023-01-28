@@ -27,45 +27,54 @@
 		return r;
 	}
 	/**@param {string} n */
-	function repWsEle(n) { this.quo = n; }
-	repWsEle.prototype = { quo: '', depth: 0, had$: false };
+	function repWsEle(n) { n && (this.quo = n); }
+	repWsEle.prototype = { quo: false, depth: 0, had$: false };
+	function Stack(n) { this.mem = [this.ele = n] }
+	Stack.prototype = {
+		mem: null,
+		now: 0,
+		ele: void 0,
+		add: function (n) { this.mem.push(n); this.ele = this.mem[++this.now]; },
+		del: function () { this.mem.pop(); this.ele = this.mem[--this.now]; }
+	};
 	/**@param {string|string[]} str */
 	function repWs(str) {
-		var stack = [new repWsEle()], now = 0, eleNow = stack[now], isInquo = false;
+		var stack = new Stack(new repWsEle());
 		var rslt = [], flag = 0, i;
-		for (i = 0; i < str.length; ++i)
-			if (isInquo) switch (str[i]) {
-				case '$': eleNow.had$ = true; continue;
-				case eleNow.quo:
-					stack.pop(), eleNow = stack[--now], isInquo = false;
-					rslt.push(toStr(str.slice(flag, flag = i + 1)));
-					continue;
-				case '\\': ++i; delete eleNow.had$; continue;
-				case '{': eleNow.quo === '`' && eleNow.had$ && (
-					stack.push(new repWsEle()), eleNow = stack[++now], isInquo = false,
-					rslt.push(toStr(str.slice(flag, flag = i + 1)))
-				); delete eleNow.had$; continue;
-				default: delete eleNow.had$; continue;
-			}
-			else switch (str[i]) {
+		for (i = 0; i < str.length; ++i) switch (stack.ele.quo) {
+			case false: switch (str[i]) {
 				case "'": case "`": case '"':
-					stack.push(new repWsEle(str[i])), eleNow = stack[++now], isInquo = true;
+					stack.add(new repWsEle(str[i]));
 					rslt.push(outSpace(toStr(str.slice(flag, flag = i))));
 					continue;
-				case '{': case '[': case '(': ++eleNow.depth; continue;
+				case '{': case '[': case '(': ++stack.ele.depth; continue;
 				case '}': case ']': case ')': case ',':
-					if (eleNow.depth === 0 && now === 0) return {
+					if (stack.ele.depth === 0 && stack.now === 0) return {
 						code: (rslt.push(outSpace(toStr(str.slice(flag, i)))), rmvVoid(rslt).join(' ')),
 						index: i,
 						nofin: str[i] === ','
 					};
-					if (str[i] !== ',') eleNow.depth-- || (
-						stack.pop(), eleNow = stack[--now], isInquo = true,
+					if (str[i] !== ',') stack.ele.depth-- || (
+						stack.del(),
 						rslt.push(outSpace(toStr(str.slice(flag, flag = i))))
 					);
 					continue;
 				default: continue;
 			}
+			default: switch (str[i]) {
+				case '$': stack.ele.had$ = true; continue;
+				case stack.ele.quo:
+					stack.del();
+					rslt.push(toStr(str.slice(flag, flag = i + 1)));
+					continue;
+				case '\\': ++i; delete stack.ele.had$; continue;
+				case '{': stack.ele.quo === '`' && stack.ele.had$ && (
+					stack.add(new repWsEle()),
+					rslt.push(toStr(str.slice(flag, flag = i + 1)))
+				); delete stack.ele.had$; continue;
+				default: delete stack.ele.had$; continue;
+			}
+		}
 		rslt.push(outSpace(toStr(str.slice(flag))));
 		return {
 			code: rmvVoid(rslt).join(' '),
@@ -99,25 +108,23 @@
 	/**@type {(fn:Function)=>string[]} */
 	function split(fn) {
 		var str = noIdx ? fn.toString().split('') : fn.toString(),
-			stack = [0], now = 0, eleNow = stack[now],
+			stack = new Stack(0),
 			rslt, name = '', flag = 0, isAsync = false,
 			t;
-		function add(n) { stack.push(n), eleNow = stack[++now]; }
-		function del() { stack.pop(), eleNow = stack[--now]; }
-		for (var i = 0; i < str.length; ++i) switch (eleNow) {
+		for (var i = 0; i < str.length; ++i) switch (stack.ele) {
 			case 0: switch (str[i]) {
-				case '(': flag = i + 1; del(), add(2), add(1); continue;
-				case '[': flag = i + 1; del(), add(6); continue;
+				case '(': flag = i + 1; stack.del(), stack.add(2), stack.add(1); continue;
+				case '[': flag = i + 1; stack.del(), stack.add(6); continue;
 				case ' ': case '\t': case '\n': case '\r': continue;
-				default: del(), add(4);
+				default: stack.del(), stack.add(4);
 			} continue;
 			case 1:
 				t = splitParams(str.slice(flag));
 				i = t.index + flag - 1;
 				rslt = t.params;
-				del();
+				stack.del();
 				continue;
-			case 2: switch (str[i]) { case '>': del(), add(3); } continue;
+			case 2: switch (str[i]) { case '>': stack.del(), stack.add(3); } continue;
 			case 3: switch (str[i]) {
 				case ' ': case '\t': case '\n': case '\r': continue;
 				case '{': return pack(rslt, (isAsync ? 'return await(async()=>' : 'return (()=>') + toStr(str.slice(i)) + ')();', name, fn, isAsync);
@@ -126,7 +133,7 @@
 			case 4: switch (str[i]) {
 				case '(': str[i - 1] in vo ? (
 					flag = i + 1,
-					del(), add(5), add(1)
+					stack.del(), stack.add(5), stack.add(1)
 				) : (
 					noIdx ? str.splice(i, 0, ' ') : str = str.slice(0, i) + ' ' + str.slice(i),
 					--i
@@ -134,7 +141,7 @@
 				case ' ': case '\t': case '\n': case '\r':
 					toStr(str.slice(flag, i)) === 'function' || (
 						toStr(str.slice(flag, i)) === 'async'
-							? (del(), add(0), isAsync = true)
+							? (stack.del(), stack.add(0), isAsync = true)
 							: name || (name = '"' + toStr(str.slice(flag, i)) + '"')
 					);
 					flag = i + 1;
@@ -142,7 +149,7 @@
 				case '>':
 					rslt = [name.slice(1, -1)];
 					name = '';
-					del(), add(3);
+					stack.del(), stack.add(3);
 					continue;
 			} continue;
 			case 5: switch (str[i]) {
@@ -152,10 +159,10 @@
 				t = repWs(str.slice(flag));
 				name = t.code;
 				i = t.index + flag;
-				del(), add(7);
+				stack.del(), stack.add(7);
 				continue;
 			case 7: switch (str[i]) {
-				case '(': flag = i + 1; del(), add(5), add(1);
+				case '(': flag = i + 1; stack.del(), stack.add(5), stack.add(1);
 			} continue;
 		}
 	}
