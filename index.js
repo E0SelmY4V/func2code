@@ -44,7 +44,7 @@
 	};
 
 	function Stack(n, add) {
-		this.mem = [this.ele = n];
+		this.ele = (this.mem = n)[this.now = n.length - 1]
 		this.rslt = [];
 		typeof add === 'string' || '0' in add ? this.str = add : this.c = add;
 	}
@@ -57,7 +57,7 @@
 		rslt: null,
 		c: null,
 		write: function (i) {
-			this.rslt.push(outSpace(toStr(this.str.slice(this.flag, this.flag = i), 1)));
+			this.rslt.push(outSpace(toStr(this.str.slice(this.flag, this.flag = i))));
 		},
 		end: function (i) {
 			this.write(i || this.flag);
@@ -75,7 +75,7 @@
 
 	/**@param {string|string[]} str */
 	function repWs(str) {
-		var stack = new Stack(new repWsEle(), str);
+		var stack = new Stack([new repWsEle()], str);
 		for (var i = 0; i < str.length; ++i) switch (stack.ele.quo) {
 			case false: switch (str[i]) {
 				case "'": case "`": case '"': delete stack.ele.slash;
@@ -190,48 +190,70 @@
 		};
 	}
 
+	var S = {
+		Orign: 30,
+		Args: 31,
+		Arrow: 32,
+		Body: 33,
+		Sign: 34,
+		PName: 35,
+		GoCmt: 37,
+		CmtLn: 38,
+		Void: 39,
+		Cmt: 40,
+		CmtEnd: 41
+	};
+
 	/**@type {(fn:Function)=>string[]} */
 	function split(fn) {
 		var str = noIdx ? fn.toString().split('') : fn.toString();
-		var stack = new Stack(0, { name: '', isAsync: false });
+		var stack = new Stack(
+			[S.Orign, S.Void],
+			{ name: '', isAsync: false, isArrow: false }
+		);
 		var t;
 		for (var i = 0; i < str.length; ++i) switch (stack.ele) {
-			case 0: switch (str[i]) {
+			case S.Orign: switch (str[i]) {
 				case '(':
+					stack.c.isArrow = true;
 					stack.flag = i + 1;
-					stack.del(), stack.add(2), stack.add(1);
+					stack.del();
+					stack.add(S.Arrow);
+					stack.add(S.Args);
 					continue;
 				case '[':
 					stack.flag = i + 1;
-					stack.del(), stack.add(6);
+					stack.del();
+					stack.add(S.PName);
 					continue;
-				case ' ': case '\t': case '\n': case '\r': continue;
 				default:
-					stack.del(), stack.add(4);
+					stack.del();
+					stack.add(S.Sign);
 					continue;
 			}
-			case 1:
+			case S.Args:
 				t = splitParams(str.slice(stack.flag));
 				i = t.index + stack.flag - 1;
 				stack.c.rslt = t.params;
 				stack.del();
 				continue;
-			case 2: switch (str[i]) {
+			case S.Arrow: switch (str[i]) {
 				case '>':
-					stack.del(), stack.add(3);
+					stack.del();
+					stack.add(S.Body);
+					stack.add(S.Void);
 					continue;
 				default: continue;
 			}
-			case 3: switch (str[i]) {
-				case ' ': case '\t': case '\n': case '\r': continue;
+			case S.Body: switch (str[i]) {
 				case '{':
 					return pack(
 						stack.c.rslt,
-						toStr(str.slice(i + 1, lastIndexOf(str, '}'), 2)),
+						toStr(str.slice(i + 1, lastIndexOf(str, '}'))),
 						stack.c.name,
 						fn,
 						stack.c.isAsync,
-						true
+						stack.c.isArrow
 					);
 				default:
 					return pack(
@@ -243,56 +265,84 @@
 						true
 					);
 			}
-			case 4: switch (str[i]) {
+			case S.Sign: switch (str[i]) {
 				case '(':
 					str[i - 1] in vo ? (
 						stack.flag = i + 1,
-						stack.del(), stack.add(5), stack.add(1)
+						stack.del(),
+						stack.add(S.Body),
+						stack.add(S.Void),
+						stack.add(S.Args)
 					) : (noIdx
 						? str.splice(i, 0, ' ')
 						: str = str.slice(0, i) + ' ' + str.slice(i),
 						--i
 					);
 					continue;
-				case ' ': case '\t': case '\n': case '\r':
-					toStr(str.slice(stack.flag, i), 4) === 'function' || (
-						toStr(str.slice(stack.flag, i), 5) === 'async'
-							? (stack.del(), stack.add(0), stack.c.isAsync = true)
-							: stack.c.name || (stack.c.name = '"' + toStr(str.slice(stack.flag, i), 6) + '"')
+				case '/': case ' ': case '\t': case '\n': case '\r':
+					t = toStr(str.slice(stack.flag, i), 4);
+					t !== 'function' && (t === 'async'
+						? (
+							stack.del(),
+							stack.add(S.Orign),
+							stack.c.isAsync = true
+						)
+						: stack.c.name || (stack.c.name = '"' + t + '"')
 					);
-					stack.flag = i + 1;
-					continue;
-				case '>':
-					stack.c.rslt = [stack.c.name.slice(1, -1)];
-					stack.c.name = '';
-					stack.del(), stack.add(3);
+					stack.add(S.Void);
+					str[i] === '/' && i--;
 					continue;
 				default: continue;
 			}
-			case 5: switch (str[i]) {
-				case '{':
-					return pack(
-						stack.c.rslt,
-						toStr(str.slice(i + 1, lastIndexOf(str, '}')), 7),
-						stack.c.name,
-						fn,
-						stack.c.isAsync,
-						false
-					);
-				default: continue;
-			}
-			case 6:
+			case S.PName:
 				t = repWs(str.slice(stack.flag));
 				stack.c.name = t.code;
 				i = t.index + stack.flag;
-				stack.del(), stack.add(7);
+				stack.del();
+				stack.add(S.Sign);
 				continue;
-			case 7: switch (str[i]) {
-				case '(':
-					stack.flag = i + 1;
-					stack.del(), stack.add(5), stack.add(1);
+			case S.Void: switch (str[i]) {
+				case '/':
+					stack.add(S.GoCmt);
+					continue;
+				case ' ': case '\t': case '\n': case '\r': continue;
+				default:
+					stack.del();
+					stack.flag = i--;
+					continue;
+			}
+			case S.GoCmt: switch (str[i]) {
+				case '/':
+					stack.del();
+					stack.add(S.CmtLn);
+					continue;
+				case '*':
+					stack.del();
+					stack.add(S.Cmt);
 					continue;
 				default: continue;
+			}
+			case S.CmtLn: switch (str[i]) {
+				case '\n': case '\r':
+					stack.del();
+					continue;
+				default: continue;
+			}
+			case S.Cmt: switch (str[i]) {
+				case '*':
+					stack.del();
+					stack.add(S.CmtEnd);
+					continue;
+				default: continue;
+			}
+			case S.CmtEnd: switch (str[i]) {
+				case '/':
+					stack.del();
+					continue;
+				default:
+					stack.del();
+					stack.add(S.Cmt);
+					continue;
 			}
 		}
 	}

@@ -59,13 +59,35 @@ module.exports = [[
 		isAsync: false
 	},
 ], [
-	function ( // asds/// / /  * */* /*{}{{{{{$$$``$`
+	function (// asds/// / /  * */* /*{}{{{{{$$$``$`
 	/**]]]}}** //*}}} */asd) { return 1 + 8; },
 	{
 		params: ["asd"],
 		innerCode: ' return 1 + 8; ',
 		nameCode: '',
 		name: '',
+		isArrow: false,
+		isAsync: false
+	},
+], [
+	function// asds/// / /  * */* /*{}{{{{{$$$``$`
+	/**]]]}}** //*}}} */ abc(a, {b: asd}) { return 1 + 8; },
+	{
+		params: ["a", "{b: asd}"],
+		innerCode: ' return 1 + 8; ',
+		nameCode: '"abc"',
+		name: 'abc',
+		isArrow: false,
+		isAsync: false
+	},
+], [
+	function //asdsa
+     abc(a, {b: asd}) { return 1 + 8; },
+	{
+		params: ["a", "{b: asd}"],
+		innerCode: ' return 1 + 8; ',
+		nameCode: '"abc"',
+		name: 'abc',
 		isArrow: false,
 		isAsync: false
 	},
@@ -95,7 +117,7 @@ module.exports = [[
 	},
 ], [
 	{
-		['c\''](a, b, asd) { return 1 + 14; }
+		['c\'']   (a, b, asd)  /**asd */    { return 1 + 14; }
 	},
 	{
 		params: ['a', 'b', 'asd'],
@@ -107,7 +129,7 @@ module.exports = [[
 	},
 ], [
 	{
-		async [`${{ [`${['to', 'Str'].join('') + `${"ing"}`}`]() { return 123 } }}` + '']() { return 1 + 15; }
+		async/**asda */[`${{ [`${['to', 'Str'].join('') + `${"ing"}`}`]() { return 123 } }}` + '']() { return 1 + 15; }
 	},
 	{
 		params: [],
@@ -119,7 +141,8 @@ module.exports = [[
 	},
 ], [
 	{
-		async ['d']({ a }) { return 1 + 15; }
+		async    ['d']({ a }) //asd
+		{ return 1 + 15; }
 	},
 	{
 		params: ['{ a }'],
@@ -131,7 +154,7 @@ module.exports = [[
 	},
 ], [
 	{
-		function() { return 1 + 16; }
+		function   ()  { return 1 + 16; }
 	},
 	{
 		params: [],
@@ -143,7 +166,7 @@ module.exports = [[
 	},
 ], [
 	{
-		async function() { return 1 + 19; }
+		async   function()  { return 1 + 19; }
 	},
 	{
 		params: [],
