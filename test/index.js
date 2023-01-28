@@ -1,6 +1,16 @@
 const func2code = require('..');
 const checkList = require('./fn');
 
+const R = {
+	params: [],
+	innerCode: '',
+	nameCode: '',
+	name: '',
+	isArrow: false,
+	isAsync: false,
+	isGenerator: false
+}
+
 function isObjectEqual(obj1, obj2) {
 	let o1 = obj1 instanceof Object, o2 = obj2 instanceof Object;
 	if (!o1 || !o2) return obj1 === obj2
@@ -20,6 +30,7 @@ function isObjectEqual(obj1, obj2) {
 for (let [f, r] of checkList) {
 	if (typeof f === 'object') for (const i in f) f = f[i];
 	const splited = func2code.split(f);
+	for (const i in R) i in r || (r[i] = R[i]);
 	if (!isObjectEqual(splited, r)) {
 		console.log(r);
 		console.log(f.toString());

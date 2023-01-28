@@ -179,14 +179,15 @@
 		};
 	}
 
-	function pack(rslt, code, name, fn, isAsync, isArrow) {
+	function pack(c, code, fn) {
 		return {
-			params: rmvVoid(rslt),
+			params: rmvVoid(c.rslt),
 			innerCode: code,
-			nameCode: name,
+			nameCode: c.name,
 			name: fn.name,
-			isArrow: isArrow,
-			isAsync: isAsync
+			isArrow: c.isArrow,
+			isAsync: c.isAsync,
+			isGenerator: c.isGenerator
 		};
 	}
 
@@ -209,7 +210,12 @@
 		var str = noIdx ? fn.toString().split('') : fn.toString();
 		var stack = new Stack(
 			[S.Orign, S.Void],
-			{ name: '', isAsync: false, isArrow: false }
+			{
+				name: '',
+				isAsync: false,
+				isArrow: false,
+				isGenerator: false
+			}
 		);
 		var t;
 		for (var i = 0; i < str.length; ++i) switch (stack.ele) {
@@ -248,21 +254,15 @@
 			case S.Body: switch (str[i]) {
 				case '{':
 					return pack(
-						stack.c.rslt,
+						stack.c,
 						toStr(str.slice(i + 1, lastIndexOf(str, '}'))),
-						stack.c.name,
-						fn,
-						stack.c.isAsync,
-						stack.c.isArrow
+						fn
 					);
 				default:
 					return pack(
-						stack.c.rslt,
+						stack.c,
 						'return ' + toStr(str.slice(i), 3) + ';',
-						stack.c.name,
-						fn,
-						stack.c.isAsync,
-						true
+						fn
 					);
 			}
 			case S.Sign: switch (str[i]) {
@@ -281,14 +281,17 @@
 					continue;
 				case '/': case ' ': case '\t': case '\n': case '\r':
 					t = toStr(str.slice(stack.flag, i), 4);
-					t !== 'function' && (t === 'async'
+					t !== 'function*' ? t !== 'function' && (t === 'async'
 						? (
 							stack.del(),
 							stack.add(S.Orign),
 							stack.c.isAsync = true
 						)
-						: stack.c.name || (stack.c.name = '"' + t + '"')
-					);
+						: (t === '*'
+							? stack.c.isGenerator = true
+							: stack.c.name || (stack.c.name = '"' + t + '"')
+						)
+					) : stack.c.isGenerator = true;
 					stack.add(S.Void);
 					str[i] === '/' && i--;
 					continue;
@@ -363,6 +366,9 @@
 		},
 		isArrow: function (fn) {
 			return split(fn).isArrow;
+		},
+		isGenerator: function (fn) {
+			return split(fn).isGenerator;
 		},
 		isAsync: function (fn) {
 			return split(fn).isAsync;

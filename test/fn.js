@@ -49,6 +49,24 @@ module.exports = [[
 		isAsync: true
 	},
 ], [
+	function*   iuy(abc) { return 1 + 7; },
+	{
+		params: ['abc'],
+		innerCode: ' return 1 + 7; ',
+		nameCode: '"iuy"',
+		name: 'iuy',
+		isGenerator: true,
+	},
+], [
+	function   *   iuy(abc) { return 1 + 7; },
+	{
+		params: ['abc'],
+		innerCode: ' return 1 + 7; ',
+		nameCode: '"iuy"',
+		name: 'iuy',
+		isGenerator: true,
+	},
+], [
 	function ({ ['fun{{{ction']: a, s: [s] }) { return 1 + 8; },
 	{
 		params: ["{ [ 'fun{{{ction' ]: a, s: [s] }"],
