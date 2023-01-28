@@ -38,6 +38,8 @@
 	repWsEle.prototype = {
 		quo: false,
 		depth: 0,
+		slash: false,
+		star: false,
 		had$: false
 	};
 
@@ -57,12 +59,14 @@
 		var flag = 0;
 		for (var i = 0; i < str.length; ++i) switch (stack.ele.quo) {
 			case false: switch (str[i]) {
-				case "'": case "`": case '"':
+				case "'": case "`": case '"': delete stack.ele.slash;
 					stack.add(new repWsEle(str[i]));
 					rslt.push(outSpace(toStr(str.slice(flag, flag = i))));
 					continue;
-				case '{': case '[': case '(': ++stack.ele.depth; continue;
-				case '}': case ']': case ')': case ',':
+				case '{': case '[': case '(': delete stack.ele.slash;
+					++stack.ele.depth;
+					continue;
+				case '}': case ']': case ')': case ',': delete stack.ele.slash;
 					if (stack.ele.depth === 0 && stack.now === 0) return {
 						code: (rslt.push(outSpace(toStr(str.slice(flag, i)))), rmvVoid(rslt).join(' ')),
 						index: i,
@@ -73,20 +77,56 @@
 						rslt.push(outSpace(toStr(str.slice(flag, flag = i))))
 					);
 					continue;
+				case '/':
+					stack.ele.slash ? (
+						stack.add(new repWsEle('/')),
+						rslt.push(outSpace(toStr(str.slice(flag, flag = i - 1)))),
+						delete stack.ele.slash
+					) : stack.ele.slash = true;
+					continue;
+				case '*':
+					stack.ele.slash && (
+						stack.add(new repWsEle('*')),
+						rslt.push(outSpace(toStr(str.slice(flag, flag = i - 1)))),
+						delete stack.ele.slash
+					);
+					continue;
+				default: delete stack.ele.slash;
+					continue;
+			}
+			case '/': switch (str[i]) {
+				case '\n': case '\r': stack.del(), flag = i + 1;
 				default: continue;
 			}
+			case '*': switch (str[i]) {
+				case '*':
+					stack.ele.star = true;
+					continue;
+				case '/':
+					stack.ele.star && stack.del(), flag = i + 1;
+					continue;
+				default: delete stack.ele.star;
+					continue;
+			}
 			default: switch (str[i]) {
-				case '$': stack.ele.had$ = true; continue;
-				case stack.ele.quo:
-					stack.del();
+				case '$':
+					stack.ele.had$ = true;
+					continue;
+				case stack.ele.quo: stack.del();
 					rslt.push(toStr(str.slice(flag, flag = i + 1)));
 					continue;
-				case '\\': ++i; delete stack.ele.had$; continue;
-				case '{': stack.ele.quo === '`' && stack.ele.had$ && (
-					stack.add(new repWsEle()),
-					rslt.push(toStr(str.slice(flag, flag = i + 1)))
-				); delete stack.ele.had$; continue;
-				default: delete stack.ele.had$; continue;
+				case '\\': delete stack.ele.had$;
+					++i;
+					continue;
+				case '{':
+					stack.ele.quo === '`' && stack.ele.had$ && (
+						stack.add(new repWsEle()),
+						rslt.push(toStr(str.slice(flag, flag = i + 1)))
+					);
+					delete stack.ele.had$;
+					continue;
+				default: delete stack.ele.had$;
+					continue;
 			}
 		}
 		rslt.push(outSpace(toStr(str.slice(flag))));

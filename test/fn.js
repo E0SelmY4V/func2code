@@ -59,6 +59,17 @@ module.exports = [[
 		isAsync: false
 	},
 ], [
+	function ( // asds{}{{{{{$$$``$`
+	/**]]]}}}}} */asd) { return 1 + 8; },
+	{
+		params: ["asd"],
+		innerCode: ' return 1 + 8; ',
+		nameCode: '',
+		name: '',
+		isArrow: false,
+		isAsync: false
+	},
+], [
 	({ ['(a\'((""\"()' + `as ${`${'a' * 23 + 'da'}`}`]: a }) => 1 + 10,
 	{
 		params: [
