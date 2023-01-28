@@ -6,29 +6,41 @@
  */
 "use strict";
 !function () {
-	var vo = { ' ': 0, '\t': 0, '\n': 0, '\r': 0 },
-		noIdx = !'.'[0];
+	var vo = { ' ': 0, '\t': 0, '\n': 0, '\r': 0 };
+	var noIdx = !'.'[0];
+
 	/**@type {(n:string|string[])=>string} */
-	var toStr = noIdx ? function (n) { return n.join('') } : function (n) { return n; }
+	var toStr = noIdx ?
+		function (n) { return n.join('') }
+		: function (n) { return n; };
+
 	/**@type {(n:string,o:string[])=>string} */
 	function reps(n, o) {
 		for (var i = o.length - 1; i >= 0; i -= 2) n = n.split(o[i - 1]).join(o[i]);
 		return n;
 	}
+
 	/**@type {(n:string)=>string} */
 	function outSpace(n) {
 		n = ' ' + reps(n, ['\n', ' ', '\r', ' ', '\t', ' ']) + ' ';
 		while (n.indexOf('  ') !== -1) n = n.split('  ').join(' ');
 		return n.slice(1, -1);
 	}
+
 	/**@type {(n:string[])=>string[]} */
 	function rmvVoid(n) {
 		for (var r = [], i = 0; i < n.length; ++i) n[i] && r.push(n[i]);
 		return r;
 	}
+
 	/**@param {string} n */
 	function repWsEle(n) { n && (this.quo = n); }
-	repWsEle.prototype = { quo: false, depth: 0, had$: false };
+	repWsEle.prototype = {
+		quo: false,
+		depth: 0,
+		had$: false
+	};
+
 	function Stack(n) { this.mem = [this.ele = n] }
 	Stack.prototype = {
 		mem: null,
@@ -37,11 +49,13 @@
 		add: function (n) { this.mem.push(n); this.ele = this.mem[++this.now]; },
 		del: function () { this.mem.pop(); this.ele = this.mem[--this.now]; }
 	};
+
 	/**@param {string|string[]} str */
 	function repWs(str) {
 		var stack = new Stack(new repWsEle());
-		var rslt = [], flag = 0, i;
-		for (i = 0; i < str.length; ++i) switch (stack.ele.quo) {
+		var rslt = [];
+		var flag = 0;
+		for (var i = 0; i < str.length; ++i) switch (stack.ele.quo) {
 			case false: switch (str[i]) {
 				case "'": case "`": case '"':
 					stack.add(new repWsEle(str[i]));
@@ -82,14 +96,18 @@
 			nofin: false
 		}
 	}
+
 	/**@type {(str:string|string[],find:string)=>number} */
 	function lastIndexOf(str, find) {
 		for (var i = str.length - 1; i >= 0; --i) if (find === str[i]) return i;
 		return -1;
 	}
+
 	/**@param {string|string[]} str */
 	function splitParams(str) {
-		var k, rslt = [], index = 0;
+		var k;
+		var rslt = [];
+		var index = 0;
 		while (
 			k = repWs(str),
 			rslt.push(k.code),
@@ -102,15 +120,27 @@
 			index: index
 		};
 	}
-	function pack(r, i, n, a, s) {
-		return { params: rmvVoid(r), innerCode: i, nameCode: n, name: a.name, code: a.toString(), isAsync: s };
+
+	function pack(rslt, code, name, fn, isAsync) {
+		return {
+			params: rmvVoid(rslt),
+			innerCode: code,
+			nameCode: name,
+			name: fn.name,
+			code: fn.toString(),
+			isAsync: isAsync
+		};
 	}
+
 	/**@type {(fn:Function)=>string[]} */
 	function split(fn) {
-		var str = noIdx ? fn.toString().split('') : fn.toString(),
-			stack = new Stack(0),
-			rslt, name = '', flag = 0, isAsync = false,
-			t;
+		var str = noIdx ? fn.toString().split('') : fn.toString();
+		var stack = new Stack(0);
+		var rslt;
+		var name = '';
+		var flag = 0;
+		var isAsync = false;
+		var t;
 		for (var i = 0; i < str.length; ++i) switch (stack.ele) {
 			case 0: switch (str[i]) {
 				case '(': flag = i + 1; stack.del(), stack.add(2), stack.add(1); continue;
@@ -127,8 +157,20 @@
 			case 2: switch (str[i]) { case '>': stack.del(), stack.add(3); } continue;
 			case 3: switch (str[i]) {
 				case ' ': case '\t': case '\n': case '\r': continue;
-				case '{': return pack(rslt, (isAsync ? 'return await(async()=>' : 'return (()=>') + toStr(str.slice(i)) + ')();', name, fn, isAsync);
-				default: return pack(rslt, 'return ' + toStr(str.slice(i)) + ';', name, fn, isAsync);
+				case '{': return pack(
+					rslt,
+					(isAsync ? 'return await(async()=>' : 'return (()=>') + toStr(str.slice(i)) + ')();',
+					name,
+					fn,
+					isAsync
+				);
+				default: return pack(
+					rslt,
+					'return ' + toStr(str.slice(i)) + ';',
+					name,
+					fn,
+					isAsync
+				);
 			} continue;
 			case 4: switch (str[i]) {
 				case '(': str[i - 1] in vo ? (
@@ -153,7 +195,13 @@
 					continue;
 			} continue;
 			case 5: switch (str[i]) {
-				case '{': return pack(rslt, toStr(str.slice(i + 1, lastIndexOf(str, '}'))), name, fn, isAsync);
+				case '{': return pack(
+					rslt,
+					toStr(str.slice(i + 1, lastIndexOf(str, '}'))),
+					name,
+					fn,
+					isAsync
+				);
 			} continue;
 			case 6:
 				t = repWs(str.slice(flag));
@@ -166,6 +214,7 @@
 			} continue;
 		}
 	}
+
 	var exp = {
 		getCode: function (fn) {
 			return fn.toString();
@@ -184,6 +233,7 @@
 			return split(fn).isAsync;
 		}
 	};
+
 	typeof module === 'undefined'
 		? window.func2code = exp
 		: module.exports = exp[['defa', 'ult'].join('')] = exp;
