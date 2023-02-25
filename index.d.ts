@@ -8,6 +8,7 @@
  */
 declare module ".";
 
+import Splitable = func2code.Splitable;
 import getCode = func2code.getCode;
 import FuncInfo = func2code.FuncInfo;
 import split = func2code.split;
@@ -23,6 +24,7 @@ import isSetter = func2code.isSetter;
 import * as def from ".";
 export default def;
 export {
+	Splitable,
 	getCode,
 	FuncInfo,
 	split,
