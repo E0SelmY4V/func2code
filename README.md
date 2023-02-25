@@ -1,6 +1,8 @@
 # Function to Code
 
-*func2code* can get the code, the name of params and the inner code of function.
+*func2code*'s main usage is to get the inner code of a function.
+
+As a by-product, *func2code* can also get various information of the function, like params, name and name-code.
 
 ## Import
 
@@ -59,6 +61,8 @@ func2code.split(async function abc(
   name: 'abc',
   isArrow: false,
   isAsync: true,
+  isGetter: false,
+  isSetter: false,
   isGenerator: false
 }
 ```
@@ -79,3 +83,5 @@ func2code.getNameCode({
 // Output
 "'n'+`${(()=>1+1)[[ 'to', 'St', 'ri', 'ng', ].join('')]()}`+123"
 ```
+
+[See all the test cases](https://github.com/E0SelmY4V/func2code/blob/master/test/fn.js)

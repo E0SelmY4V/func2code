@@ -1,3 +1,5 @@
+/// <reference path="../global.d.ts" />
+/**@type {[{[x:string]:Function}|Function,Partial<func2code.FuncInfo>,Error][]} */
 module.exports = [[
 	function () { return 1 + 6; },
 	{
