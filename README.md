@@ -16,12 +16,12 @@ import func2code from 'func2code';
 const func2code = require('func2code');
 ```
 
-### Browser
+### HTML
 
 ```html
 <script src="func2code/index.js"></script>
 <script>
-  /// <reference path="func2code/browser.d.ts" />
+  /// <reference path="func2code/global.d.ts" />
   console.log(func2code);
 </script>
 ```
