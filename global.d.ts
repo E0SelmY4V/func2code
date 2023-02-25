@@ -31,6 +31,8 @@ declare namespace func2code {
 		innerCode: string;
 		/**参数列表 */
 		params: string[];
+		/**导致解析失败的错误。如果此字段不为空，说明解析失败 */
+		error?: Error;
 	}
 
 	/**解析函数 {@link fn|`fn`}  */

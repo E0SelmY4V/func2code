@@ -190,6 +190,20 @@
 			isGenerator: c.isGenerator
 		};
 	}
+	function voidPack(err) {
+		var a = pack(
+			{
+				rslt: [],
+				isArrow: false,
+				isAsync: false,
+				isGenerator: false
+			},
+			'',
+			false
+		);
+		a.error = err;
+		return a;
+	}
 
 	var S = {
 		Orign: 30,
@@ -205,8 +219,7 @@
 		CmtEnd: 41
 	};
 
-	/**@type {(fn:Function)=>string[]} */
-	function split(fn) {
+	function splitOri(fn) {
 		var str = noIdx ? fn.toString().split('') : fn.toString();
 		var stack = new Stack(
 			[S.Orign, S.Void],
@@ -347,6 +360,15 @@
 					stack.add(S.Cmt);
 					continue;
 			}
+		}
+		throw Error('Not returned after parsing');
+	}
+
+	function split(fn) {
+		try {
+			return splitOri(fn);
+		} catch (err) {
+			return voidPack(err);
 		}
 	}
 
