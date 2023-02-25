@@ -20,11 +20,20 @@
 		return n;
 	}
 
+	/**@type {(str:string|string[],find:string)=>number} */
+	var lastIndexOf = ''.lastIndexOf
+		? function (str, find) { return str.lastIndexOf(find); }
+		: function (str, find) {
+			typeof str === 'string' && (str = str.split(''));
+			for (var r = [], i = str.length - 1; i >= 0; --i) r.push(str[i]);
+			return str.length - r.join('').indexOf(find) - 1;
+		}
+
 	/**@type {(n:string)=>string} */
 	function outSpace(n) {
-		n = ' ' + reps(n, ['\n', ' ', '\r', ' ', '\t', ' ']) + ' ';
+		n = reps(n, ['\n', ' ', '\r', ' ', '\t', ' ']);
 		while (n.indexOf('  ') !== -1) n = n.split('  ').join(' ');
-		return n.slice(1, -1);
+		return n;
 	}
 
 	/**@type {(n:string[])=>string[]} */
@@ -33,35 +42,63 @@
 		return r;
 	}
 
+	/**@type {(n:string[])=>string} */
+	function rsiSpace(n) {
+		for (var s = true, i = 0; i < n.length; ++i) (
+			s && n[i].indexOf(' ') === 0 && (n[i] = n[i].slice(1)),
+			s = lastIndexOf(n[i], ' ') === n[i].length - 1
+		);
+		n = n.join('');
+		return lastIndexOf(n, ' ') === n.length - 1 ? n.slice(0, -1) : n
+	}
+
 	/**@param {string} n */
 	function repWsEle(n) { n && (this.quo = n); }
 	repWsEle.prototype = {
+		/**@type {false|string} */
 		quo: false,
 		depth: 0,
+		/**是否有斜线 */
 		slash: false,
+		/**是否有星星 */
 		star: false,
+		/**是否有 `$` */
 		had$: false
 	};
 
+	/**
+	 * @template [T=number]
+	 * @param {T[]} n
+	 * @param {string|string[]|{[x:string]:any}} add
+	 */
 	function Stack(n, add) {
 		this.ele = (this.mem = n)[this.now = n.length - 1]
 		this.rslt = [];
 		typeof add === 'string' || '0' in add ? this.str = add : this.c = add;
 	}
 	Stack.prototype = {
+		/**栈
+		 * @type {T[]} */
 		mem: null,
+		/**当前栈最高层 */
 		now: 0,
+		/**当前栈顶元素
+		 * @type {T} */
 		ele: void 0,
 		flag: 0,
 		str: '',
+		/**@type {string[]} */
 		rslt: null,
+		/**栈运行时属性
+		 * @type {{[x:string]:any}} */
 		c: null,
-		write: function (i) {
-			this.rslt.push(outSpace(toStr(this.str.slice(this.flag, this.flag = i))));
+		write: function (i, outside) {
+			var str = toStr(this.str.slice(this.flag, this.flag = i));
+			this.rslt.push(outside ? outSpace(str) : str);
 		},
 		end: function (i) {
-			this.write(i || this.flag);
-			return rmvVoid(this.rslt).join(' ');
+			this.write(i || this.flag, true);
+			return rsiSpace(rmvVoid(this.rslt));
 		},
 		add: function (n) {
 			this.mem.push(n);
@@ -77,10 +114,10 @@
 	function repWs(str) {
 		var stack = new Stack([new repWsEle()], str);
 		for (var i = 0; i < str.length; ++i) switch (stack.ele.quo) {
-			case false: switch (str[i]) {
+			case false: switch (str[i]) { // 外面
 				case "'": case "`": case '"': delete stack.ele.slash;
 					stack.add(new repWsEle(str[i]));
-					stack.write(i);
+					stack.write(i, true);
 					continue;
 				case '{': case '[': case '(': delete stack.ele.slash;
 					++stack.ele.depth;
@@ -93,20 +130,20 @@
 					};
 					if (str[i] !== ',') stack.ele.depth-- || (
 						stack.del(),
-						stack.write(i)
+						stack.write(i, true)
 					);
 					continue;
 				case '/':
 					stack.ele.slash ? (
 						stack.add(new repWsEle('/')),
-						stack.write(i - 1),
+						stack.write(i - 1, true),
 						delete stack.ele.slash
 					) : stack.ele.slash = true;
 					continue;
 				case '*':
 					stack.ele.slash && (
 						stack.add(new repWsEle('*')),
-						stack.write(i - 1),
+						stack.write(i - 1, true),
 						delete stack.ele.slash
 					);
 					continue;
@@ -132,7 +169,7 @@
 					stack.ele.had$ = true;
 					continue;
 				case stack.ele.quo: stack.del();
-					stack.write(i + 1);
+					stack.write(i + 1, false);
 					continue;
 				case '\\': delete stack.ele.had$;
 					++i;
@@ -140,7 +177,7 @@
 				case '{':
 					stack.ele.quo === '`' && stack.ele.had$ && (
 						stack.add(new repWsEle()),
-						stack.write(i + 1)
+						stack.write(i + 1, false)
 					);
 					delete stack.ele.had$;
 					continue;
@@ -153,12 +190,6 @@
 			index: i,
 			nofin: false
 		};
-	}
-
-	/**@type {(str:string|string[],find:string)=>number} */
-	function lastIndexOf(str, find) {
-		for (var i = str.length - 1; i >= 0; --i) if (find === str[i]) return i;
-		return -1;
 	}
 
 	/**@param {string|string[]} str */

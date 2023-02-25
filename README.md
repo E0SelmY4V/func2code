@@ -28,61 +28,54 @@ const func2code = require('func2code');
 
 ## Usage
 
-- Input
+```js
+// Input
+func2code.getInnerCode(()=>1+1);
 
-  ```js
-  func2code.split(async function abc(
-    a, k,
-    {[`${[1,2,3].join('')}`]: b},
-    [c, d]
-  ) {
-    return 1 + 2;
-  });
-  ```
+// Output
+'return 1+1;'
+```
 
-  Output
+```js
+// Input
+func2code.split(async function abc(
+  a, k,
+  {[`${[1,2,3].join('')}`]: b},
+  [c, d]
+) {
+  return 1 + 2;
+});
 
-  ```js
-  {
-    params: [ 'a', 'k', "{[ `${ [1,2,3].join( '' ) }` ]: b}", '[c, d]' ],
-    innerCode: '\n  return 1 + 2;\n',
-    nameCode: '"abc"',
-    name: 'abc',
-    isArrow: false,
-    isAsync: true,
-    isGenerator: false
+// Output
+{
+  params: [
+    'a',
+    'k',
+    "{[`${[1,2,3].join('')}`]: b}",
+    '[c, d]'
+  ],
+  innerCode: '\n  return 1 + 2;\n',
+  nameCode: '"abc"',
+  name: 'abc',
+  isArrow: false,
+  isAsync: true,
+  isGenerator: false
+}
+```
+
+```js
+// Input
+func2code.getNameCode({
+  ['n'+`${(()=>1+1)[[
+    'to',
+    'St',
+    'ri',
+    'ng',
+  ].join('')]()}`+123](n) {
+    return n + 1;
   }
-  ```
+}['n()=>1+1123'])
 
-- Input
-
-  ```js
-  func2code.getInnerCode(()=>1+1);
-  ```
-
-  Output
-
-  ```js
-  'return 1+1;'
-  ```
-
-- Input
-
-  ```js
-  func2code.getNameCode({
-    ['n'+`${(()=>1+1)[[
-      'to',
-      'St',
-      'ri',
-      'ng',
-    ].join('')]()}`+123](n) {
-      return n + 1;
-    }
-  }['n()=>1+1123'])
-  ```
-
-  Output
-
-  ```js
-  "'n' + `${ (()=>1+1)[[ 'to' , 'St' , 'ri' , 'ng' , ].join( '' )]() }` +123"
-  ```
+// Output
+"'n'+`${(()=>1+1)[[ 'to', 'St', 'ri', 'ng', ].join('')]()}`+123"
+```

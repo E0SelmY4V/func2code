@@ -27,14 +27,18 @@ function isObjectEqual(obj1, obj2) {
 	return true
 }
 
-for (let [f, r] of checkList) {
+var c = 0;
+for (let [f, r, e] of checkList) {
 	if (typeof f === 'object') for (const i in f) f = f[i];
 	const splited = func2code.split(f);
 	for (const i in R) i in r || (r[i] = R[i]);
 	if (!isObjectEqual(splited, r)) {
-		console.log(r);
-		console.log(f.toString());
-		console.log(splited);
+		console.log('应', r);
+		// console.log(f.toString());
+		console.log('实', splited);
 		console.log('\33[31m--------------------\33[39m');
+		console.log(c)
+		throw e;
 	}
+	c++;
 }

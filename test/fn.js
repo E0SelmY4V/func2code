@@ -8,6 +8,7 @@ module.exports = [[
 		isAsync: false,
 		isArrow: false,
 	},
+	Error()
 ], [
 	function asd() { return 1 + 6; },
 	{
@@ -18,6 +19,7 @@ module.exports = [[
 		isArrow: false,
 		isAsync: false
 	},
+	Error()
 ], [
 	async function asd() { return 1 + 6; },
 	{
@@ -28,6 +30,7 @@ module.exports = [[
 		isArrow: false,
 		isAsync: true
 	},
+	Error()
 ], [
 	() => 1 + 7,
 	{
@@ -38,6 +41,7 @@ module.exports = [[
 		isArrow: true,
 		isAsync: false
 	},
+	Error()
 ], [
 	async ({ function: a }) => { return 1 + 7; },
 	{
@@ -48,8 +52,9 @@ module.exports = [[
 		isArrow: true,
 		isAsync: true
 	},
+	Error()
 ], [
-	function*   iuy(abc) { return 1 + 7; },
+	function* iuy(abc) { return 1 + 7; },
 	{
 		params: ['abc'],
 		innerCode: ' return 1 + 7; ',
@@ -57,8 +62,9 @@ module.exports = [[
 		name: 'iuy',
 		isGenerator: true,
 	},
+	Error()
 ], [
-	function   *   iuy(abc) { return 1 + 7; },
+	function* iuy(abc) { return 1 + 7; },
 	{
 		params: ['abc'],
 		innerCode: ' return 1 + 7; ',
@@ -66,16 +72,18 @@ module.exports = [[
 		name: 'iuy',
 		isGenerator: true,
 	},
+	Error()
 ], [
 	function ({ ['fun{{{ction']: a, s: [s] }) { return 1 + 8; },
 	{
-		params: ["{ [ 'fun{{{ction' ]: a, s: [s] }"],
+		params: ["{ ['fun{{{ction']: a, s: [s] }"],
 		innerCode: ' return 1 + 8; ',
 		nameCode: '',
 		name: '',
 		isArrow: false,
 		isAsync: false
 	},
+	Error()
 ], [
 	function (// asds/// / /  * */* /*{}{{{{{$$$``$`
 	/**]]]}}** //*}}} */asd) { return 1 + 8; },
@@ -87,33 +95,36 @@ module.exports = [[
 		isArrow: false,
 		isAsync: false
 	},
+	Error()
 ], [
 	function// asds/// / /  * */* /*{}{{{{{$$$``$`
-	/**]]]}}** //*}}} */ abc(a, {b: asd}) { return 1 + 8; },
+	/**]]]}}** //*}}} */ abc(a, { b: asd}) { return 1 + 8; },
 	{
-		params: ["a", "{b: asd}"],
+		params: ["a", "{ b: asd}"],
 		innerCode: ' return 1 + 8; ',
 		nameCode: '"abc"',
 		name: 'abc',
 		isArrow: false,
 		isAsync: false
 	},
+	Error()
 ], [
 	function //asdsa
-     abc(a, {b: asd}) { return 1 + 8; },
+		abc(a, {b: asd     }   ) { return 1 + 8; },
 	{
-		params: ["a", "{b: asd}"],
+		params: ["a", "{b: asd }"],
 		innerCode: ' return 1 + 8; ',
 		nameCode: '"abc"',
 		name: 'abc',
 		isArrow: false,
 		isAsync: false
 	},
+	Error()
 ], [
 	({ ['(a\'((""\"()' + `as ${`${'a' * 23 + 'da'}`}`]: a }) => 1 + 10,
 	{
 		params: [
-			'{ [ \'(a\\\'((""\\"()\' + `as ${ `${ \'a\' * 23 + \'da\' }` }` ]: a }'
+			'{ [\'(a\\\'((""\\\"()\' + `as ${`${\'a\' * 23 + \'da\'}`}`]: a }'
 		],
 		innerCode: 'return 1 + 10;',
 		nameCode: '',
@@ -121,6 +132,7 @@ module.exports = [[
 		isArrow: true,
 		isAsync: false
 	},
+	Error()
 ], [
 	{
 		a() { return 1 + 12; }
@@ -133,9 +145,10 @@ module.exports = [[
 		isArrow: false,
 		isAsync: false
 	},
+	Error()
 ], [
 	{
-		['c\'']   (a, b, asd)  /**asd */    { return 1 + 14; }
+		['c\''](a, b, asd)  /**asd */ { return 1 + 14; }
 	},
 	{
 		params: ['a', 'b', 'asd'],
@@ -145,6 +158,7 @@ module.exports = [[
 		isArrow: false,
 		isAsync: false
 	},
+	Error()
 ], [
 	{
 		async/**asda */[`${{ [`${['to', 'Str'].join('') + `${"ing"}`}`]() { return 123 } }}` + '']() { return 1 + 15; }
@@ -152,27 +166,29 @@ module.exports = [[
 	{
 		params: [],
 		innerCode: ' return 1 + 15; ',
-		nameCode: '`${ { [ `${ [ \'to\' , \'Str\' ].join( \'\' ) + `${ "ing" }` }` ]() { return 123 } } }` + \'\'',
+		nameCode: '`${{ [`${[\'to\', \'Str\'].join(\'\') + `${"ing"}`}`]() { return 123 } }}` + \'\'',
 		name: '123',
 		isArrow: false,
 		isAsync: true
 	},
+	Error()
 ], [
 	{
-		async    ['d']({ a }) //asd
+		async    [    'd       '    ]({ a }) //asd
 		{ return 1 + 15; }
 	},
 	{
 		params: ['{ a }'],
 		innerCode: ' return 1 + 15; ',
-		nameCode: "'d'",
-		name: 'd',
+		nameCode: "'d       '",
+		name: 'd       ',
 		isArrow: false,
 		isAsync: true
 	},
+	Error()
 ], [
 	{
-		function   ()  { return 1 + 16; }
+		function() { return 1 + 16; }
 	},
 	{
 		params: [],
@@ -182,9 +198,10 @@ module.exports = [[
 		isArrow: false,
 		isAsync: false
 	},
+	Error()
 ], [
 	{
-		async   function()  { return 1 + 19; }
+		async function() { return 1 + 19; }
 	},
 	{
 		params: [],
@@ -194,4 +211,5 @@ module.exports = [[
 		isArrow: false,
 		isAsync: true
 	},
+	Error()
 ]];
