@@ -17,6 +17,8 @@ import getNameCode = func2code.getNameCode;
 import isArrow = func2code.isArrow;
 import isGenerator = func2code.isGenerator;
 import isAsync = func2code.isAsync;
+import isGetter = func2code.isGetter;
+import isSetter = func2code.isSetter;
 
 import * as def from ".";
 export default def;
@@ -30,4 +32,6 @@ export {
 	isArrow,
 	isGenerator,
 	isAsync,
+	isGetter,
+	isSetter,
 };

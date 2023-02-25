@@ -3,11 +3,13 @@ const checkList = require('./fn');
 
 const R = {
 	params: [],
-	innerCode: '',
+	innerCode: ' ',
 	nameCode: '',
 	name: '',
 	isArrow: false,
 	isAsync: false,
+	isSetter: false,
+	isGetter: false,
 	isGenerator: false
 }
 

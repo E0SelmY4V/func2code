@@ -23,6 +23,10 @@ declare namespace func2code {
 		isArrow: boolean;
 		/**是否是迭代器函数 */
 		isGenerator: boolean;
+		/**是否是 get 访问器函数 */
+		isGetter: boolean;
+		/**是否是 set 访问器函数 */
+		isSetter: boolean;
 		/**名字 */
 		name?: string;
 		/**名字代码 */
@@ -88,4 +92,10 @@ declare namespace func2code {
 
 	/**判断 {@link fn|`fn`} 是否是一个异步函数 */
 	function isAsync(fn: Splitable): boolean;
+
+	/**判断 {@link fn|`fn`} 是否是一个 get 访问器函数 */
+	function isGetter(fn: Splitable): boolean;
+
+	/**判断 {@link fn|`fn`} 是否是一个 set 访问器函数 */
+	function isSetter(fn: Splitable): boolean;
 }

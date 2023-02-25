@@ -68,8 +68,9 @@
 
 	/**
 	 * @template [T=number]
+	 * @template {{[x:string]:any}} [C={}]
 	 * @param {T[]} n
-	 * @param {string|string[]|{[x:string]:any}} add
+	 * @param {string|string[]|C} add
 	 */
 	function Stack(n, add) {
 		this.ele = (this.mem = n)[this.now = n.length - 1]
@@ -90,7 +91,7 @@
 		/**@type {string[]} */
 		rslt: null,
 		/**栈运行时属性
-		 * @type {{[x:string]:any}} */
+		 * @type {C} */
 		c: null,
 		write: function (i, outside) {
 			var str = toStr(this.str.slice(this.flag, this.flag = i));
@@ -217,7 +218,9 @@
 			nameCode: c.name,
 			name: fn.name,
 			isArrow: c.isArrow,
-			isAsync: c.isAsync,
+			isAsync: c.async,
+			isGetter: c.get,
+			isSetter: c.set,
 			isGenerator: c.isGenerator
 		};
 	}
@@ -256,9 +259,12 @@
 			[S.Orign, S.Void],
 			{
 				name: '',
-				isAsync: false,
+				async: false,
+				get: false,
+				set: false,
 				isArrow: false,
-				isGenerator: false
+				isGenerator: false,
+				hadHead: false
 			}
 		);
 		var t;
@@ -325,17 +331,29 @@
 					continue;
 				case '/': case ' ': case '\t': case '\n': case '\r':
 					t = toStr(str.slice(stack.flag, i), 4);
-					t !== 'function*' ? t !== 'function' && (t === 'async'
-						? (
-							stack.del(),
-							stack.add(S.Orign),
-							stack.c.isAsync = true
-						)
-						: (t === '*'
-							? stack.c.isGenerator = true
-							: stack.c.name || (stack.c.name = '"' + t + '"')
-						)
-					) : stack.c.isGenerator = true;
+					switch (t) {
+						case 'get':
+						case 'set':
+						case 'async':
+							if (stack.c.hadHead) {
+								stack.c.name = '"' + t + '"';
+								break;
+							}
+							stack.del();
+							stack.add(S.Orign);
+							stack.c[t] = true;
+							stack.c.hadHead = true;
+							break;
+						case 'function*':
+						case '*':
+							stack.c.isGenerator = true;
+							break;
+						case 'function':
+							break;
+						default:
+							stack.c.name || (stack.c.name = '"' + t + '"');
+							break;
+					}
 					stack.add(S.Void);
 					str[i] === '/' && i--;
 					continue;
@@ -425,6 +443,12 @@
 		},
 		isAsync: function (fn) {
 			return split(fn).isAsync;
+		},
+		isGetter: function (fn) {
+			return split(fn).isGetter;
+		},
+		isSetter: function (fn) {
+			return split(fn).isSetter;
 		}
 	};
 
