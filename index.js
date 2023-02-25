@@ -264,7 +264,8 @@
 				set: false,
 				isArrow: false,
 				isGenerator: false,
-				hadHead: false
+				/**@type {false|'async'|'get'|'set'} */
+				head: false
 			}
 		);
 		var t;
@@ -294,6 +295,14 @@
 				stack.del();
 				continue;
 			case S.Arrow: switch (str[i]) {
+				case '{':
+					stack.del();
+					stack.add(S.Body);
+					stack.c.name = '"' + stack.c.head +  '"';
+					stack.c[stack.c.head] = false;
+					stack.c.isArrow = false;
+					i--;
+					continue;
 				case '>':
 					stack.del();
 					stack.add(S.Body);
@@ -335,14 +344,14 @@
 						case 'get':
 						case 'set':
 						case 'async':
-							if (stack.c.hadHead) {
+							if (stack.c.head) {
 								stack.c.name = '"' + t + '"';
 								break;
 							}
 							stack.del();
 							stack.add(S.Orign);
 							stack.c[t] = true;
-							stack.c.hadHead = true;
+							stack.c.head = t;
 							break;
 						case 'function*':
 						case '*':

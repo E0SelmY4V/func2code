@@ -188,4 +188,24 @@ module.exports = [[
 		isGetter: true
 	},
 	Error()
+], [
+	{
+		async        ()    { return 1 +1; }
+	},
+	{
+		nameCode: '"async"',
+		name: 'async',
+		innerCode: ' return 1 +1; ',
+	},
+	Error()
+], [
+	{
+		set(){ return 2 + 1; }
+	},
+	{
+		nameCode: '"set"',
+		name: 'set',
+		innerCode: ' return 2 + 1; ',
+	},
+	Error()
 ]];
