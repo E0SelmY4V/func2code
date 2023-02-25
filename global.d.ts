@@ -5,12 +5,15 @@
  * @link https://github.com/E0SelmY4V/func2code
  */
 declare namespace func2code {
+	/**可以被解析的东西 */
+	type Splitable = Function | { toString: (...args: any[]) => string }
+
 	/**
 	 * 获取 {@link fn|`fn`} 的源代码。
 	 *
 	 * 实际上就是调用 {@link Function.prototype.toString|`Function#toString`}
 	 */
-	function getCode<F extends Function>(fn: F): ReturnType<F['toString']>;
+	function getCode<F extends Splitable>(fn: F): ReturnType<F['toString']>;
 
 	/**函数解析出的信息 */
 	interface FuncInfo {
@@ -31,7 +34,7 @@ declare namespace func2code {
 	}
 
 	/**解析函数 {@link fn|`fn`}  */
-	function split(fn: Function): FuncInfo;
+	function split(fn: Splitable): FuncInfo;
 
 	/**
 	 * 获取 {@link fn|`fn`} 的内部代码
@@ -48,7 +51,7 @@ declare namespace func2code {
 	 *
 	 * console.log(code); // 'return 1 + 2;'
 	 */
-	function getInnerCode(fn: Function): string;
+	function getInnerCode(fn: Splitable): string;
 
 	/**
 	 * 获取 {@link fn|`fn`} 的参数列表
@@ -61,7 +64,7 @@ declare namespace func2code {
 	 * console.log(params);
 	 * // [ 'a', '{ b = NaN, x: c } = { x: 0 }', '[d]=[4]' ]
 	 */
-	function getParams(fn: Function): string[];
+	function getParams(fn: Splitable): string[];
 
 	/**
 	 * 获取 {@link fn|`fn`} 的名字代码
@@ -73,14 +76,14 @@ declare namespace func2code {
 	 *
 	 * console.log(nameCode); // 'a' + 'bc'
 	 */
-	function getNameCode(fn: Function): string;
+	function getNameCode(fn: Splitable): string;
 
 	/**判断 {@link fn|`fn`} 是否是一个箭头函数 */
-	function isArrow(fn: Function): boolean;
+	function isArrow(fn: Splitable): boolean;
 
 	/**判断 {@link fn|`fn`} 是否是一个迭代器函数 */
-	function isGenerator(fn: Function): boolean;
+	function isGenerator(fn: Splitable): boolean;
 
 	/**判断 {@link fn|`fn`} 是否是一个异步函数 */
-	function isAsync(fn: Function): boolean;
+	function isAsync(fn: Splitable): boolean;
 }
