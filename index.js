@@ -1,6 +1,6 @@
 /**
  * Function to Code
- * @version 1.1.1
+ * @version 1.2.0
  * @license MIT
  * @link https://github.com/E0SelmY4V/func2code
  */
