@@ -22,9 +22,9 @@
 
 	/**@type {(str:string|string[],find:string)=>number} */
 	var lastIndexOf = ''.lastIndexOf
-		? function (str, find) { return str.lastIndexOf(find); }
+		? function (str, find) { return (typeof str === 'string' ? str : str.join('')).lastIndexOf(find); }
 		: function (str, find) {
-			typeof str === 'string' && (str = str.split(''));
+			noIdx || (str = str.split(''));
 			for (var r = [], i = str.length - 1; i >= 0; --i) r.push(str[i]);
 			return str.length - r.join('').indexOf(find) - 1;
 		}
