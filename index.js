@@ -298,7 +298,7 @@
 				case '{':
 					stack.del();
 					stack.add(S.Body);
-					stack.c.name = '"' + stack.c.head +  '"';
+					stack.c.name = '"' + stack.c.head + '"';
 					stack.c[stack.c.head] = false;
 					stack.c.isArrow = false;
 					i--;
@@ -430,36 +430,27 @@
 		}
 	}
 
+	function getFn(a) {
+		var n = a[1] || a[0];
+		exp[a[0]] = function (fn) { return split(fn)[n]; };
+	}
 	var exp = {
 		getCode: function (fn) {
 			return fn.toString();
 		},
-		split: split,
-		getInnerCode: function (fn) {
-			return split(fn).innerCode;
-		},
-		getParams: function (fn) {
-			return split(fn).params;
-		},
-		getNameCode: function (fn) {
-			return split(fn).nameCode;
-		},
-		isArrow: function (fn) {
-			return split(fn).isArrow;
-		},
-		isGenerator: function (fn) {
-			return split(fn).isGenerator;
-		},
-		isAsync: function (fn) {
-			return split(fn).isAsync;
-		},
-		isGetter: function (fn) {
-			return split(fn).isGetter;
-		},
-		isSetter: function (fn) {
-			return split(fn).isSetter;
-		}
+		split: split
 	};
+	var l = [
+		['getInnerCode', 'innerCode'],
+		['getParams', 'params'],
+		['getNameCode', 'nameCode'],
+		'isArrow',
+		'isGenerator',
+		'isAsync',
+		'isGetter',
+		'isSetter'
+	];
+	for (var i = 0; i < l.length; ++i) typeof l[i] === 'string' ? getFn([l[i]]) : getFn(l[i]);
 
 	typeof module === 'undefined'
 		? window.func2code = exp
