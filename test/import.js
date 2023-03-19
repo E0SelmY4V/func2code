@@ -9,4 +9,4 @@ require('export-tester')(
 			console.log(f2c);
 		}
 	}
-);
+).then(() => process.exit(0));
