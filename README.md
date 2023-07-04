@@ -1,5 +1,8 @@
 # Function to Code
 
+[![github action](https://github.com/E0SelmY4V/func2code/actions/workflows/test.yml/badge.svg)](https://github.com/E0SelmY4V/func2code/actions)
+[![codecov](https://codecov.io/gh/E0SelmY4V/func2code/branch/master/graph/badge.svg?token=LAZE5B30HX)](https://codecov.io/gh/E0SelmY4V/func2code)
+
 *func2code*'s main usage is to get the inner code of a function.
 
 As a by-product, *func2code* can also get various information of the function, like params, name and name-code.
