@@ -4,7 +4,7 @@
 	"description": "Turn functions into strings",
 	"main": "index.js",
 	"scripts": {
-		"test": "node test"
+		"test": "nyc tape test"
 	},
 	"keywords": [
 		"converter",
@@ -27,6 +27,8 @@
 		"url": "https://github.com/E0SelmY4V/func2code/issues"
 	},
 	"devDependencies": {
+		"nyc": "^15.1.0",
+		"tape": "^5.6.4",
 		"export-tester": "^1.0.0"
 	},
 	"homepage": "https://github.com/E0SelmY4V/func2code#readme"
